@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Film Eleştirmenleri</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #4c000c, #000000 60%);
+      color:#e5e7eb;
+      padding:20px;
+    }
+
+    a {
+      color: #e5e7eb;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #ffb3c1;
+    }
+
+    .app {
+      max-width:1100px;
+      margin:auto;
+      background:rgba(67, 6, 6, 0.92);
+      border-radius:22px;
+      padding:24px;
+      border:1px solid rgba(167, 30, 30, 0.35);
+      box-shadow:0 0 40px rgba(0,0,0,.6);
+    }
+
+    h1 {
+      font-size:1.5rem;
+      margin-bottom:4px;
+      color: #ebe0e0;
+      text-shadow: 0 0 8px rgba(114, 0, 26, 0.7),
+                   0 0 14px rgba(76, 0, 12, 0.9);
+    }
+
+    .subtitle {
+      color:#ffccd5;
+      font-size:.9rem;
+    }
+
+    .tabs {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:14px;
+    }
+
+    .tab {
+      padding:8px 16px;
+      background:rgba(97, 20, 20, 0.7);
+      border:1px solid rgba(140, 42, 42, 0.45);
+      border-radius:999px;
+      cursor:pointer;
+      color:#ebb2b2;
+      font-size:.9rem;
+      transition:.15s;
+    }
+
+    .tab:hover {
+      background:rgba(77, 16, 16, 0.9);
+    }
+
+    .tab.active {
+      background:linear-gradient(to right,#390606,#811d1d);
+      color:#ffdfdf;
+    }
+
+    .layout {
+      display:grid;
+      grid-template-columns:1.1fr 1.3fr;
+      gap:18px;
+      margin-top:20px;
+    }
+
+    @media(max-width:900px) {
+      .layout { grid-template-columns:1fr; }
+    }
+
+    .card {
+      background:rgba(76, 0, 12, 0.4);
+      border: 1px solid #4c000c;
+      border-radius:8px;
+      padding:12px;
+      margin: 10px 0;
+      backdrop-filter: blur(3px);
+      transition: 0.25s;
+      box-shadow: 0 0 10px rgba(114, 0, 26, 0.4);
+    }
+
+    .card:hover {
+      background: rgba(59, 1, 14, 0.55);
+      border-color: #450313;
+      transform: scale(1.02);
+      box-shadow: 0 0 16px rgba(114, 0, 26, 0.7);
+    }
+
+    .card-title {
+      font-size:1rem;
+      margin-bottom:12px;
+      font-weight:600;
+    }
+
+    input, select, textarea {
+      width:100%;
+      padding:8px;
+      margin-top:4px;
+      margin-bottom:6px;
+      border-radius:10px;
+      border:1px solid rgba(183, 137, 137, 0.6);
+      background:#2a0f0f;
+      color:#ffdddd;
+      font-size:.9rem;
+    }
+
+    textarea { min-height:60px; resize:vertical; }
+
+    .btn-primary {
+      margin-top:6px;
+      width:100%;
+      padding:10px;
+      border:none;
+      border-radius:999px;
+      background: linear-gradient(to right, #470212, #000000);
+      color:#f4e6e6;
+      cursor:pointer;
+      font-size:.9rem;
+      transition: 0.25s ease;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(to right, #430211, #000000);
+      transform: scale(1.03);
+      filter:brightness(1.05);
+    }
+
+    .item-card {
+      background:#200b0b;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(132, 76, 76, 0.4);
+      margin-bottom:10px;
+      overflow:hidden;
+      clear:both;
+    }
+
+    .item-title {
+      font-weight:600;
+      font-size:.95rem;
+      margin-bottom:4px;
+    }
+
+    .stars {
+      color:#ff0000;
+      margin-top:4px;
+      font-size:.9rem;
+    }
+
+    .meta {
+      font-size:.8rem;
+      color:#d6aaaa;
+      margin-bottom:4px;
+    }
+
+    .notes {
+      font-size:.85rem;
+      margin-top:4px;
+    }
+
+    .who-tag {
+      display:inline-block;
+      margin-top:6px;
+      font-size:.75rem;
+      padding:3px 8px;
+      border-radius:999px;
+      background:rgba(125, 3, 3, 0.336);
+      border:1px solid rgba(19, 9, 9, 0.5);
+      color:#f9a8d4;
+    }
+
+    .delete-btn, .izledik-btn {
+      margin-top:6px;
+      border:none;
+      padding:4px 10px;
+      border-radius:8px;
+      color:#fbf9f9;
+      cursor:pointer;
+      font-size:.75rem;
+      margin-left:6px;
+      float:right;
+    }
+
+    .delete-btn {
+      background:#ff0000;
+    }
+
+    .izledik-btn {
+      background:#16a34a;
+    }
+
+    .modal-bg {
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      backdrop-filter:blur(4px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity:0;
+      pointer-events:none;
+      transition:.2s;
+      z-index:50;
+    }
+
+    .modal-bg.active {
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    .modal {
+      background:#280303;
+      padding:20px;
+      border-radius:16px;
+      width:90%;
+      max-width:360px;
+      border:1px solid rgba(84, 36, 36, 0.5);
+      box-shadow:0 0 25px rgba(0,0,0,.5);
+      text-align:center;
+    }
+
+    .modal h3 {
+      margin-bottom:8px;
+      font-size:1.1rem;
+    }
+
+    .close-btn {
+      margin-top:14px;
+      padding:6px 14px;
+      background:#3c0101;
+      border:none;
+      border-radius:8px;
+      color:#fbf9f9;
+      cursor:pointer;
+      font-size:.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>🎬 Film & Dizi Eleştirmenleri</h1>
+    <div class="subtitle">Zehra &amp; Mete'nin ortak arşivi</div>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-watched">İzlendi</button>
+      <button class="tab" id="tab-to-watch">İzlenecek</button>
+      <button class="tab" id="tab-recommend">✨ Ne İzlesek Yaa??</button>
+      <button class="tab" id="tab-about">ℹ️ Hakkında</button>
+    </div>
+
+    <div class="layout">
+      <!-- İZLENDİ FORMU -->
+      <div class="card" id="section-watched">
+        <div class="card-title">İzlendi Listesine Ekle</div>
+
+        <input id="w-title" placeholder="Film/Dizi adı" />
+        <select id="w-genre">
+          <option value="">Tür seç...</option>
+          <option>Dram</option>
+          <option>Romantik</option>
+          <option>Aksiyon</option>
+          <option>Komedi</option>
+          <option>Anime</option>
+          <option>Bilim kurgu</option>
+          <option>Gerilim</option>
+          <option>Korku & Gizem</option>
+        </select>
+        <input id="w-director" placeholder="Yönetmen (opsiyonel)" />
+        <select id="w-who">
+          <option value="">Kim izledi?</option>
+          <option>Zehra❤️</option>
+          <option>Mete❤️</option>
+          <option>İkimiz❤️❤️</option>
+        </select>
+        <select id="w-rating">
+          <option value="">Puan (1–5)</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+        <input type="date" id="w-date" />
+        <textarea id="w-notes" placeholder="Kısa not..."></textarea>
+        <button class="btn-primary" id="add-watched">Ekle cnm</button>
+      </div>
+
+      <!-- İZLENECEK FORMU -->
+      <div class="card" id="section-to-watch" style="display:none;">
+        <div class="card-title">İzlenecek Listesine Ekle cnm</div>
+
+        <input id="t-title" placeholder="Film/Dizi adı" />
+        <select id="t-genre">
+          <option value="">Tür seç...</option>
+          <option>Dram</option>
+          <option>Aksiyon</option>
+          <option>Animasyon</option>
+          <option>Korku & Gizem</option>
+          <option>Romantik</option>
+          <option>Komedi</option>
+          <option>Anime</option>
+          <option>Bilim kurgu</option>
+          <option>Gerilim</option>
+        </select>
+        <input id="t-director" placeholder="Yönetmen (opsiyonel)" />
+        <select id="t-who">
+          <option value="">Kim izlemek istiyor?</option>
+          <option>Zehra❤️</option>
+          <option>Mete❤️</option>
+          <option>İkimiz❤️❤️</option>
+        </select>
+        <textarea id="t-notes" placeholder="Kısa not..."></textarea>
+        <button class="btn-primary" id="add-to-watch">Ekle cnm</button>
+      </div>
+
+      <!-- LİSTE -->
+      <div class="card">
+        <div class="card-title" id="list-title">İzlendi Listesi</div>
+        <div id="list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NE İZLESEK MODAL -->
+  <div class="modal-bg" id="modal-recommend">
+    <div class="modal">
+      <h3>Bugün Ne İzlesekk??</h3>
+      <p id="recommend-text">Öneri yükleniyor...</p>
+      <button class="close-btn" onclick="closeRecommend()">Kapat</button>
+    </div>
+  </div>
+
+  <!-- HAKKINDA MODAL -->
+  <div class="modal-bg" id="modal-about">
+    <div class="modal">
+      <h3>Hakkında</h3>
+      <p>24.11.2025 tarihinde bu siteyi sizin için yaptım , made by rumiş</p>
+      <button class="close-btn" onclick="closeAbout()">Kapat</button>
+    </div>
+  </div>
+  
+  <!-- FIREBASE + UYGULAMA KODU -->
+  <script type="module">
+    // Firebase v9 CDN importları
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp,
+      onSnapshot,
+      doc,
+      deleteDoc,
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDMZiRklOPjCcrMTlZsZCBaEV1KOllGQzo",
+      authDomain: "film-elestirmenleri-bordo.firebaseapp.com",
+      projectId: "film-elestirmenleri-bordo",
+      storageBucket: "film-elestirmenleri-bordo.firebasestorage.app",
+      messagingSenderId: "650588268456",
+      appId: "1:650588268456:web:8d57b80e15ae20c51d1f9d",
+      measurementId: "G-66KSCW4099",
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    // Firestore
+    const db = getFirestore(app);
+    const moviesRef = collection(db, "movies_bordo");   
+
+    // DOM referansları
+    const tabWatched = document.getElementById("tab-watched");
+    const tabToWatch = document.getElementById("tab-to-watch");
+    const tabRecommend = document.getElementById("tab-recommend");
+    const tabAbout = document.getElementById("tab-about");
+
+    const sectionWatched = document.getElementById("section-watched");
+    const sectionToWatch = document.getElementById("section-to-watch");
+    const listTitle = document.getElementById("list-title");
+    const listEl = document.getElementById("list");
+
+    const wTitle = document.getElementById("w-title");
+    const wGenre = document.getElementById("w-genre");
+    const wDirector = document.getElementById("w-director");
+    const wWho = document.getElementById("w-who");
+    const wRating = document.getElementById("w-rating");
+    const wDate = document.getElementById("w-date");
+    const wNotes = document.getElementById("w-notes");
+    const btnAddWatched = document.getElementById("add-watched");
+
+    const tTitle = document.getElementById("t-title");
+    const tGenre = document.getElementById("t-genre");
+    const tDirector = document.getElementById("t-director");
+    const tWho = document.getElementById("t-who");
+    const tNotes = document.getElementById("t-notes");
+    const btnAddToWatch = document.getElementById("add-to-watch");
+
+    const modalRecommend = document.getElementById("modal-recommend");
+    const modalAbout = document.getElementById("modal-about");
+    const recommendText = document.getElementById("recommend-text");
+
+    let mode = "watched";
+    let movies = [];
+
+    function setMode(newMode) {
+      mode = newMode;
+
+      if (mode === "watched") {
+        sectionWatched.style.display = "block";
+        sectionToWatch.style.display = "none";
+        listTitle.textContent = "İzlendi Listesi";
+        tabWatched.classList.add("active");
+        tabToWatch.classList.remove("active");
+      } else {
+        sectionWatched.style.display = "none";
+        sectionToWatch.style.display = "block";
+        listTitle.textContent = "İzlenecek Listesi";
+        tabWatched.classList.remove("active");
+        tabToWatch.classList.add("active");
+      }
+
+      renderList();
+    }
+
+    tabWatched.addEventListener("click", () => setMode("watched"));
+    tabToWatch.addEventListener("click", () => setMode("to_watch"));
+
+    tabAbout.addEventListener("click", () => {
+      modalAbout.classList.add("active");
+    });
+
+    tabRecommend.addEventListener("click", () => {
+      openRecommend();
+    });
+
+    window.closeAbout = function () {
+      modalAbout.classList.remove("active");
+    };
+
+    window.closeRecommend = function () {
+      modalRecommend.classList.remove("active");
+    };
+
+    // Listeyi ekrana yaz
+    function renderList() {
+      listEl.innerHTML = "";
+
+      const filtered = movies.filter((m) => m.status === mode);
+
+      if (filtered.length === 0) {
+        const empty = document.createElement("div");
+        empty.textContent =
+          mode === "watched"
+            ? "Henüz izlenen bir şey eklenmedi."
+            : "İzlenecek listen boş.";
+        empty.style.fontSize = ".85rem";
+        empty.style.color = "#9ca3af";
+        listEl.appendChild(empty);
+        return;
+      }
+
+      filtered
+        .sort((a, b) => {
+          const ta = a.createdAt?.seconds || 0;
+          const tb = b.createdAt?.seconds || 0;
+          return tb - ta;
+        })
+        .forEach((m) => {
+          const card = document.createElement("div");
+          card.className = "item-card";
+
+          card.innerHTML = `
+            <div class="item-title">
+              ${m.title || "İsimsiz"} 
+              <span style="opacity:.7">(${m.genre || "Tür yok"})</span>
+            </div>
+            <div class="meta">
+              ${m.director ? "Yönetmen: " + m.director + " · " : ""}
+              ${
+                m.status === "watched"
+                  ? "İzlenme: " +
+                    (m.watchedDate
+                      ? new Date(m.watchedDate).toLocaleDateString("tr-TR")
+                      : "Tarih yok")
+                  : "Eklenme: " +
+                    (m.createdAt?.seconds
+                      ? new Date(m.createdAt.seconds * 1000).toLocaleDateString(
+                          "tr-TR"
+                        )
+                      : "bilinmiyor")
+              }
+            </div>
+            ${
+              m.status === "watched"
+                ? `<div class="stars">${"⭐".repeat(m.rating || 0)}</div>`
+                : ""
+            }
+            <div class="notes">
+              ${
+                m.notes && m.notes.trim().length > 0
+                  ? m.notes
+                  : m.status === "watched"
+                  ? "Not yok."
+                  : "İzleyince not eklersiniz."
+              }
+            </div>
+            <div class="who-tag">
+              ${m.who || "Kim izlediği bilinmiyor"}
+            </div>
+            <button class="delete-btn" data-id="${m.id}">Sil</button>
+            ${
+              mode === "to_watch"
+                ? `<button class="izledik-btn" data-id="${m.id}">İzledik</button>`
+                : ""
+            }
+          `;
+
+          listEl.appendChild(card);
+        });
+    }
+
+    // Firestore realtime dinleme
+    onSnapshot(moviesRef, (snap) => {
+      movies = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      renderList();
+    });
+
+    // İzlendi ekle
+    btnAddWatched.addEventListener("click", async () => {
+      if (!wTitle.value.trim() || !wGenre.value || !wWho.value || !wRating.value) {
+        alert("Zorunlu alanları doldur.");
+        return;
+      }
+
+      const data = {
+        title: wTitle.value.trim(),
+        genre: wGenre.value,
+        director: wDirector.value.trim(),
+        who: wWho.value,
+        rating: Number(wRating.value),
+        watchedDate: wDate.value || null,
+        notes: wNotes.value.trim(),
+        status: "watched",
+        createdAt: serverTimestamp()
+      };
+
+      await addDoc(moviesRef, data);
+
+      wTitle.value = "";
+      wGenre.value = "";
+      wDirector.value = "";
+      wWho.value = "";
+      wRating.value = "";
+      wDate.value = "";
+      wNotes.value = "";
+    });
+
+    // İzlenecek ekle
+    btnAddToWatch.addEventListener("click", async () => {
+      if (!tTitle.value.trim() || !tGenre.value || !tWho.value) {
+        alert("Zorunlu alanları doldur.");
+        return;
+      }
+
+      const data = {
+        title: tTitle.value.trim(),
+        genre: tGenre.value,
+        director: tDirector.value.trim(),
+        who: tWho.value,
+        notes: tNotes.value.trim(),
+        status: "to_watch",
+        createdAt: serverTimestamp()
+      };
+
+      await addDoc(moviesRef, data);
+
+      tTitle.value = "";
+      tGenre.value = "";
+      tDirector.value = "";
+      tWho.value = "";
+      tNotes.value = "";
+    });
+
+    // Silme + İZLEDİK
+    listEl.addEventListener("click", async (e) => {
+      const delBtn = e.target.closest(".delete-btn");
+      if (delBtn) {
+        const deleteId = delBtn.dataset.id;
+        await deleteDoc(doc(db, "movies", deleteId));
+        return;
+      }
+
+      const izledikBtn = e.target.closest(".izledik-btn");
+      if (izledikBtn) {
+        const watchId = izledikBtn.dataset.id;
+        const movieRef = doc(db, "movies", watchId);
+
+        await updateDoc(movieRef, {
+          status: "watched",
+          watchedDate: new Date().toISOString().split("T")[0]
+        });
+
+        return;
+      }
+    });
+
+    // Ne İzlesek? (akıllı öneri)
+    function openRecommend() {
+      const list = movies.filter((m) => m.status === "to_watch");
+      if (list.length === 0) {
+        recommendText.textContent = "İzlenecek listende hiç film yok ühü.";
+      } else {
+        list.sort((a, b) => {
+          let sa = 0;
+          let sb = 0;
+          if (a.who && a.who.includes("İkimiz")) sa += 3;
+          if (b.who && b.who.includes("İkimiz")) sb += 3;
+          if (a.notes) sa += 1;
+          if (b.notes) sb += 1;
+          const ta = a.createdAt?.seconds || 0;
+          const tb = b.createdAt?.seconds || 0;
+          if (ta && tb) {
+            if (ta < tb) sa += 0.5;
+            else sb += 0.5;
+          }
+          return sb - sa;
+        });
+
+        const pick = list[0];
+        recommendText.innerHTML =
+          `<strong>${pick.title}</strong><br>` +
+          `Tür: ${pick.genre || "bilinmiyor"}<br><br>` +
+          `Bugün bunu mu izlesek ?`;
+      }
+      modalRecommend.classList.add("active");
+    }
+
+    // başlangıç modu
+    setMode("watched");
+  </script>
+</body>
+</html>
