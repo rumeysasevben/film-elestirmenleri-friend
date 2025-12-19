@@ -2,7 +2,11 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Film Eleştirmenleri" />
+  <meta name="theme-color" content="#000000" />
   <title>Film Eleştirmenleri</title>
   <style>
     * {
@@ -363,7 +367,6 @@
   <script type="module">
     // Firebase v9 CDN importları
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
     import {
       getFirestore,
       collection,
@@ -385,12 +388,15 @@
       measurementId: "G-66KSCW4099",
     };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+    // Initialize Firebase with error handling
+    let app, db;
+    try {
+      app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+    } catch (error) {
+      console.error("Firebase initialization error:", error);
+    }
 
-    // Firestore
-    const db = getFirestore(app);
     const moviesRef = collection(db, "movies_bordo");   
 
     // DOM referansları
@@ -633,7 +639,7 @@
     function openRecommend() {
       const list = movies.filter((m) => m.status === "to_watch");
       if (list.length === 0) {
-        recommendText.textContent = "İzlenecek listende hiç film yok ühü.";
+        recommendText.textContent = "İzlenecek listende hiç film yok ühüü.";
       } else {
         list.sort((a, b) => {
           let sa = 0;
