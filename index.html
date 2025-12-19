@@ -617,14 +617,14 @@
       const delBtn = e.target.closest(".delete-btn");
       if (delBtn) {
         const deleteId = delBtn.dataset.id;
-        await deleteDoc(doc(db, "movies", deleteId));
+        await deleteDoc(doc(db, "movies_bordo", deleteId));
         return;
       }
 
       const izledikBtn = e.target.closest(".izledik-btn");
       if (izledikBtn) {
         const watchId = izledikBtn.dataset.id;
-        const movieRef = doc(db, "movies", watchId);
+        const movieRef = doc(db, "movies_bordo", watchId);
 
         await updateDoc(movieRef, {
           status: "watched",
